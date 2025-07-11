@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Leaf, Handshake, Globe, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
+import toast from 'react-hot-toast';
 
 const ProducerForm = () => {
   const navigate = useNavigate();
+  const { axios } = useAppContext();
 
   const [form, setForm] = useState({
     name: '',
@@ -30,11 +32,13 @@ const ProducerForm = () => {
       specialties: form.specialties.split(',').map(s => s.trim())
     };
     try {
-      await axios.post('http://localhost:4000/api/producer/submit', data);
-      alert('Application submitted!');
-      navigate('/');
+      const response = await axios.post('/api/producer/submit', data);
+      if (response.data.message) {
+        toast.success('Application submitted successfully!');
+        navigate('/');
+      }
     } catch (err) {
-      alert('Submission failed');
+      toast.error('Submission failed. Please try again.');
       console.error(err);
     }
   };
