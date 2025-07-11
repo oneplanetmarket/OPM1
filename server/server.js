@@ -20,6 +20,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+// Find available port starting from 4000
+const findAvailablePort = async (startPort) => {
+    return new Promise((resolve) => {
+        import('net').then(net => {
+            const server = net.createServer();
+            
+            server.listen(startPort, () => {
+                const port = server.address().port;
+                server.close(() => resolve(port));
+            });
+            
+            server.on('error', () => {
+                findAvailablePort(startPort + 1).then(resolve);
+            });
+        });
+    });
+};
+
 const port = process.env.PORT || 4000;
 
 await connectDB()
@@ -91,7 +109,49 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error', message: err.message });
 });
 
-app.listen(port, '0.0.0.0', ()=>{
-    console.log(`Server is running on http://0.0.0.0:${port}`)
-    console.log(`Local access: http://localhost:${port}`)
-})
+// Start server with port conflict handling
+const startServer = async () => {
+    try {
+        const availablePort = await findAvailablePort(port);
+        const server = app.listen(availablePort, '0.0.0.0', ()=>{
+            console.log(`Server is running on http://0.0.0.0:${availablePort}`)
+            console.log(`Local access: http://localhost:${availablePort}`)
+        });
+        
+        // Handle server errors
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`Port ${availablePort} is already in use. Trying next port...`);
+                startServer();
+            } else {
+                console.error('Server error:', err);
+                process.exit(1);
+            }
+        });
+        
+        return server;
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+
+// Start the server
+startServer().then(server => {
+    // Graceful shutdown handlers
+    process.on('SIGTERM', () => {
+        console.log('SIGTERM received, shutting down gracefully');
+        server.close(() => {
+            console.log('Server closed');
+            process.exit(0);
+        });
+    });
+
+    process.on('SIGINT', () => {
+        console.log('SIGINT received, shutting down gracefully');
+        server.close(() => {
+            console.log('Server closed');
+            process.exit(0);
+        });
+    });
+});
