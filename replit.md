@@ -99,3 +99,13 @@ Preferred communication style: Simple, everyday language.
 - Support for both online payments and cash on delivery
 - Tax calculation (2% added to orders)
 - Order amount validation against product prices
+
+## Recent Changes
+
+### July 11, 2025 - Critical Bug Fixes
+- **Fixed Internal Server Error**: Resolved file permission issues in build directory causing download failures
+- **Rebuilt Frontend**: Completely rebuilt client/dist with proper file permissions  
+- **Server Configuration**: Updated to serve on 0.0.0.0:4000 for external access
+- **Error Handling**: Added comprehensive error handling for file serving
+- **Static Assets**: All CSS/JS files now properly accessible
+- **Download Functionality**: File downloads working correctly with HTTP 200 status

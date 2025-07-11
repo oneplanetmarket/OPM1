@@ -71,9 +71,27 @@ app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'API is W
 
 // Serve React app for all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  try {
+    const filePath = path.join(__dirname, '../client/dist/index.html');
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Internal Server Error');
+      }
+    });
+  } catch (error) {
+    console.error('Catch-all route error:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-app.listen(port, ()=>{
-    console.log(`Server is running on http://localhost:${port}`)
+// Add error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal Server Error', message: err.message });
+});
+
+app.listen(port, '0.0.0.0', ()=>{
+    console.log(`Server is running on http://0.0.0.0:${port}`)
+    console.log(`Local access: http://localhost:${port}`)
 })
