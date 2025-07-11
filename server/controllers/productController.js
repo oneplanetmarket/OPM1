@@ -41,6 +41,7 @@ export const productById = async (req, res)=>{
     try {
         const { id } = req.body
         const product = await Product.findById(id)
+        
         res.json({success: true, product})
     } catch (error) {
         console.log(error.message);
@@ -48,12 +49,17 @@ export const productById = async (req, res)=>{
     }
 }
 
-// Change Product inStock : /api/product/stock
+// Update Product Stock : /api/product/change-stock
 export const changeStock = async (req, res)=>{
     try {
-        const { id, inStock } = req.body
-        await Product.findByIdAndUpdate(id, {inStock})
-        res.json({success: true, message: "Stock Updated"})
+        const { id, inStock } = req.body;
+        
+        if(!id || inStock === undefined) {
+            return res.json({success: false, message: 'Missing required fields'});
+        }
+        
+        await Product.findByIdAndUpdate(id, { inStock });
+        res.json({success: true, message: 'Stock updated successfully'});
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message })
