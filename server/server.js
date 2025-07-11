@@ -47,7 +47,10 @@ await connectCloudinary()
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5000',
-  'https://your-app.replit.app',
+  'https://oneplanetmarket.com',
+  'http://oneplanetmarket.com',
+  'https://www.oneplanetmarket.com',
+  'http://www.oneplanetmarket.com',
   process.env.FRONTEND_URL || 'http://localhost:5000'
 ]
 
