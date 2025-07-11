@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { spawn } = require('child_process');
 const path = require('path');
 
@@ -12,7 +14,7 @@ const server = spawn('node', ['server.js'], {
 // Wait a moment for server to start, then start frontend
 setTimeout(() => {
   const frontend = spawn('npx', ['vite'], {
-    cwd: __dirname,
+    cwd: path.join(__dirname, 'client'),
     stdio: 'inherit'
   });
 
@@ -31,4 +33,4 @@ setTimeout(() => {
 }, 2000);
 
 console.log('Backend API: http://localhost:4000');
-console.log('Frontend App: http://localhost:5000');
+console.log('Frontend App: http://localhost:5173');
