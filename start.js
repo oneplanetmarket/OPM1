@@ -1,5 +1,16 @@
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const path = require('path');
+const fs = require('fs');
+
+console.log('🚀 Building OPM for production...');
+
+// Build the frontend if not already built
+const distPath = path.join(__dirname, 'client', 'dist');
+if (!fs.existsSync(distPath)) {
+  console.log('Building frontend...');
+  execSync('npm run build', { stdio: 'inherit' });
+  console.log('Frontend build complete!');
+}
 
 // Start the backend server
 const server = spawn('node', ['server.js'], {
@@ -7,8 +18,9 @@ const server = spawn('node', ['server.js'], {
   stdio: 'inherit'
 });
 
-console.log('🚀 OPM Backend started on port 4000');
-console.log('Visit http://localhost:4000 to access the API');
+console.log('🚀 OPM Production server started');
+console.log('Backend API: http://localhost:4000');
+console.log('Frontend App: http://localhost:4000');
 
 // Handle cleanup
 process.on('SIGINT', () => {
