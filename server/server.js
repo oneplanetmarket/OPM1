@@ -57,7 +57,6 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // API routes
-app.get('/', (req, res) => res.send("API is Working"));
 app.use('/api/user', userRouter)
 app.use('/api/seller', sellerRouter)
 app.use('/api/producer', producerRouter)
@@ -66,6 +65,9 @@ app.use('/api/cart', cartRouter)
 app.use('/api/address', addressRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/newsletter', newsletterRouter)
+
+// Health check endpoint
+app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'API is Working' }));
 
 // Serve React app for all other routes
 app.get('*', (req, res) => {
