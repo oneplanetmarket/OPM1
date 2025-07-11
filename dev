@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+console.log('🚀 Starting OPM development servers...');
+
+// Start backend server
+const server = spawn('node', ['server.js'], {
+  cwd: path.join(__dirname, 'server'),
+  stdio: 'inherit'
+});
+
+// Wait a moment then start frontend
+setTimeout(() => {
+  const client = spawn('npx', ['vite'], {
+    cwd: path.join(__dirname, 'client'),
+    stdio: 'inherit'
+  });
+
+  // Handle cleanup
+  const cleanup = () => {
+    server.kill();
+    client.kill();
+    process.exit(0);
+  };
+
+  process.on('SIGINT', cleanup);
+  process.on('SIGTERM', cleanup);
+  
+  client.on('exit', cleanup);
+  server.on('exit', cleanup);
+}, 2000);
+
+console.log('Backend: http://localhost:4000');
+console.log('Frontend: http://localhost:5000');
