@@ -95,9 +95,14 @@ const Navbar = () => {
         <NavLink to="/" onClick={()=> setOpen(false)}>Home</NavLink>
         <NavLink to="/products" onClick={()=> setOpen(false)}>All Product</NavLink>
         {user && 
-        <NavLink to="/products" onClick={()=> setOpen(false)}>My Orders</NavLink>
+        <NavLink to="/producerform" onClick={()=> setOpen(false)}>Producer</NavLink>
         }
-        <NavLink to="/" onClick={()=> setOpen(false)}>Contact</NavLink>
+        <NavLink to="/mission" onClick={()=> setOpen(false)}>Mission</NavLink>
+        <a href="/producerform" className="inline-block">
+       <button className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white rounded-full">
+        Join as Producer
+       </button>
+         </a>
 
         {!user ? (
           <button onClick={()=>{
